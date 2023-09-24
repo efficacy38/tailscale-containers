@@ -1,7 +1,7 @@
 FROM golang:latest as builder
 WORKDIR /app
 
-ENV VER=v1.48.2
+ARG VER=v1.48.2
 
 # build tailscale binaries
 RUN CGO_ENABLED=0 go install tailscale.com/cmd/derper@${VER}
