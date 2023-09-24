@@ -21,6 +21,8 @@ services:
     image: ghcr.io/efficacy38/tailscale-derp:latest
     build: 
       context: ./tailscale-derp
+    volumes:
+      - ./cert:/app/certs
     ports:
       # acme http challenge
       - 80:80/tcp
