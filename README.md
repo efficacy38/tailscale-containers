@@ -1,6 +1,7 @@
 # tailscale-containers
 
-這個專案是 tailscale 自行編譯的 container
+這個專案是 tailscale 自行編譯的 container,因為 base image 同時包含多個 binary
+所以獨立成一個 compose 來當成 base image
 
 ## tailscale-userspace
 

@@ -17,6 +17,10 @@ services:
       - 1056
     depends_on:
       - tailscale-base
+    env_file:
+      - ./.env
+    privileged: true
+    # entrypoint: sleep infinity
 
   tailscale-derp:
     image: ghcr.io/efficacy38/tailscale-derp:latest
