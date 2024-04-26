@@ -15,7 +15,7 @@ RUN apt-get update && \
   update-ca-certificates && \
   apt-get clean
 
-COPY --from=tailscale-base /go/bin/derper /go/bin/tailscale /go/bin/tailscaled /usr/local/bin/
+COPY --from=ghcr.io/efficacy38/tailscale-base /go/bin/derper /go/bin/tailscale /go/bin/tailscaled /usr/local/bin/
 COPY entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
