@@ -10,6 +10,11 @@ ENV DERP_STUN true
 ENV DERP_HTTP_PORT 80
 ENV DERP_VERIFY_CLIENTS false
 
+RUN apt-get update && \
+  apt-get install -y ca-certificates && \
+  update-ca-certificates && \
+  apt-get clean
+
 COPY --from=tailscale-base /go/bin/derper /go/bin/tailscale /go/bin/tailscaled /usr/local/bin/
 COPY entrypoint.sh /entrypoint.sh
 
