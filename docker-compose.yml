@@ -1,13 +1,14 @@
-version: '3.8'
+---
+version: "3.8"
 services:
   tailscale-base:
     image: ghcr.io/efficacy38/tailscale-base:latest
-    build: 
+    build:
       context: ./tailscale-base
-  
+
   tailscale-userspace:
     image: ghcr.io/efficacy38/tailscale-userspace:latest
-    build: 
+    build:
       context: ./tailscale-userspace
     expose:
       # http proxy
@@ -16,10 +17,10 @@ services:
       - 1056
     depends_on:
       - tailscale-base
-  
+
   tailscale-derp:
     image: ghcr.io/efficacy38/tailscale-derp:latest
-    build: 
+    build:
       context: ./tailscale-derp
     volumes:
       - ./cert:/app/certs
@@ -31,3 +32,6 @@ services:
       - 3478:3478/udp
     depends_on:
       - tailscale-base
+    env_file:
+      - path: ./.env
+    # entrypoint: sleep infinity
