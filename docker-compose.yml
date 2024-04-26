@@ -1,0 +1,41 @@
+---
+version: "3.8"
+services:
+  tailscale-base:
+    image: ghcr.io/efficacy38/tailscale-base:latest
+    build:
+      context: ./tailscale-base
+
+  tailscale-userspace:
+    image: ghcr.io/efficacy38/tailscale-userspace:latest
+    build:
+      context: ./tailscale-userspace
+    expose:
+      # http proxy
+      - 1055
+      # sock5 proxy
+      - 1056
+    depends_on:
+      - tailscale-base
+    env_file:
+      - ./.env
+    privileged: true
+    # entrypoint: sleep infinity
+
+  tailscale-derp:
+    image: ghcr.io/efficacy38/tailscale-derp:latest
+    build:
+      context: ./tailscale-derp
+    volumes:
+      - ./cert:/app/certs
+    ports:
+      # acme http challenge
+      - 80:80/tcp
+      - 443:443/tcp
+      # stun port
+      - 3478:3478/udp
+    depends_on:
+      - tailscale-base
+    env_file:
+      - path: ./.env
+    # entrypoint: sleep infinity
