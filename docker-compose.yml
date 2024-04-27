@@ -17,6 +17,9 @@ services:
       - 1056
     depends_on:
       - tailscale-base
+    volumes:
+      # save state file
+      - ./data:/app
     env_file:
       - ./.env
     privileged: true

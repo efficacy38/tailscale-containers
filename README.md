@@ -15,6 +15,8 @@ TAILSCALE_HOSTNAME=derp
 TAILSCALE_OPT=--login-server https://xxxxxxxxx.net
 
 # (Optional) if you want's tailscale to be as userspace proxy
+## TAILSCALED_OPT can be `mem:` for ephemernal machine(it would auto delete it
+## 30 min to 48 hours), or use `/app/states` to store machine's auth key
 TAILSCALED_STATE_ARG="mem:"
 TAILSCALED_OPT=--socks5-server=0.0.0.0:1055 --outbound-http-proxy-listen=0.0.0.0:1056
 ```
