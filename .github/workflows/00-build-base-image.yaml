@@ -103,7 +103,7 @@ jobs:
       - name: Build and push app base image
         uses: docker/build-push-action@v5
         with:
-          context: ./tailscale-base
+          context: ./tailscale-derp
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -150,10 +150,10 @@ jobs:
             type=ref,event=branch
             type=raw,value=latest
 
-      - name: Build and push app base image
+      - name: Build and push app tailscale userspace image
         uses: docker/build-push-action@v5
         with:
-          context: ./tailscale-base
+          context: ./tailscale-userspace
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
