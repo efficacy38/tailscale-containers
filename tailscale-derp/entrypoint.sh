@@ -4,7 +4,7 @@ set -eu
 trap 'kill -TERM $PID' TERM INT
 echo "Starting Tailscale daemon"
 # -state=mem: will logout and remove ephemeral node from network immediately after ending.
-tailscaled --tun=userspace-networking "${TAILSCALED_STATE_ARG}" &
+tailscaled --tun=userspace-networking ${TAILSCALED_STATE_ARG} &
 PID=$!
 
 # connect to tailscale
