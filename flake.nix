@@ -46,7 +46,8 @@
             pkgs.bash
             pkgs.coreutils
             entrypointScript
-          ] ++ extraContents;
+          ]
+          ++ extraContents;
           extraCommands = ''
             mkdir -p usr/bin
             ln -s ${entrypointScript}/bin/entrypoint.sh entrypoint.sh
@@ -85,6 +86,7 @@
             entrypoint = ./tailscale-derp/entrypoint.sh;
             extraContents = [
               pkgs.cacert
+              pkgs.tailscale.derper
             ];
           };
         }
