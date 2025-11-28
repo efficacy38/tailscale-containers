@@ -30,14 +30,6 @@ load-all: load-userspace load-derp
 clean:
     rm -f result
 
-# Build using docker-compose (legacy method)
-docker-build:
-    docker compose build
-
-# Build specific service with docker-compose
-docker-build-service service:
-    docker compose build {{service}}
-
 # Run tailscale-userspace with docker-compose
 run-userspace:
     docker compose up tailscale-userspace

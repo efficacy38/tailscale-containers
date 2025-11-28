@@ -4,11 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a tailscale-containers project that builds custom Tailscale container images with different configurations. The project primarily uses Nix flakes to build reproducible container images with Tailscale binaries from nixpkgs. A legacy Docker Compose build method is also available that uses a multi-stage architecture where a base image contains all binaries compiled from Go source.
+This is a tailscale-containers project that builds custom Tailscale container images with different configurations. The project uses Nix flakes to build reproducible container images with Tailscale binaries from nixpkgs.
 
 ### Container Images
-
-**Primary (Nix-built):**
 
 1. **tailscale-userspace**: Runs Tailscale in userspace networking mode without requiring elevated privileges
    - Built with Nix from nixpkgs
@@ -24,14 +22,6 @@ This is a tailscale-containers project that builds custom Tailscale container im
    - Supports Let's Encrypt automatic certificate provisioning
    - Includes: bash, coreutils, cacert
    - Entrypoint: tailscale-derp/entrypoint.sh
-
-**Legacy (Docker-built):**
-
-3. **tailscale-base**: Base image built from Go source (Docker Compose only)
-   - Built from golang:latest
-   - Compiles derper, tailscale, and tailscaled binaries v1.64.2 with CGO_ENABLED=0
-   - Used as base for Docker Compose builds
-   - Published to ghcr.io/efficacy38/tailscale-base
 
 ## Build Commands
 
@@ -80,17 +70,15 @@ nix flake check
 nix flake show
 ```
 
-### Using Docker Compose (Legacy)
+### Running with Docker Compose
+After building images with Nix, you can run them using Docker Compose:
+
 ```bash
-# Build all images
-docker compose build
-
-# Build specific image
-docker compose build tailscale-base
-docker compose build tailscale-userspace
-docker compose build tailscale-derp
-
 # Run services
+just run-userspace
+just run-derp
+
+# Or use docker compose directly
 docker compose up tailscale-userspace
 docker compose up tailscale-derp
 ```
@@ -125,9 +113,8 @@ vim .env
 ## Architecture Details
 
 ### Build System
-The project supports two build methods:
+The project uses Nix flakes to build container images:
 
-**Nix Flakes (Primary Method):**
 - Uses Tailscale binaries from nixpkgs instead of building from source
 - Helper function `buildTailscaleContainer` creates images with:
   - Tailscale package from nixpkgs
@@ -136,11 +123,7 @@ The project supports two build methods:
   - Service-specific dependencies (curl/wget/iputils for userspace, cacert for derp)
 - Both containers built independently using the same helper
 - Reproducible builds across platforms
-
-**Docker Compose (Legacy Method):**
-- `tailscale-base` builds binaries from Go source (v1.64.2)
-- `tailscale-userspace` and `tailscale-derp` copy binaries from base image
-- Three-stage build: base → userspace/derp
+- Images are tagged with the Tailscale version from nixpkgs
 
 ### Entrypoint Scripts
 Both service containers use bash entrypoint scripts that:
@@ -153,19 +136,6 @@ Both service containers use bash entrypoint scripts that:
 
 The Nix build includes these scripts via `pkgs.writeScriptBin`, making them executable at `/bin/entrypoint.sh`.
 
-### GitHub Actions CI/CD
-Automated builds on:
-- Push/PR to main branch
-- Weekly schedule (Sunday 00:00)
-- Manual workflow dispatch
-
-Build pipeline (.github/workflows/00-build-base-image.yaml):
-1. Builds base image for linux/amd64 and linux/arm64
-2. Parallel builds of derp and userspace images (both depend on base)
-3. Pushes to GitHub Container Registry (ghcr.io)
-4. Uses Docker layer caching for efficiency
-
-Note: CI/CD currently uses Docker builds. Consider migrating to Nix builds for reproducibility.
 
 ## Nix Flake Structure
 
@@ -197,8 +167,9 @@ The flake.nix uses a helper function approach for building containers:
 ## Development Notes
 
 **Tailscale Versions:**
-- Nix builds: Uses Tailscale version from nixpkgs (nixos-24.11 channel)
-- Docker builds: v1.64.2 (update ARG VER in tailscale-base/Dockerfile)
+- Uses Tailscale version from nixpkgs (FlakeHub stable branch)
+- Check current version: `just versions`
+- Container images are tagged with the Tailscale version
 
 **Runtime Requirements:**
 - Privileged mode required for tailscale-userspace (specified in docker-compose.yml)
