@@ -1,0 +1,91 @@
+---
+name: Build and Push Containers
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-userspace:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup nix env
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226
+
+      - name: Build tailscale-userspace image
+        run: |
+          nix build .#tailscale-userspace
+
+      - name: Get Tailscale version
+        id: version
+        run: |
+          VERSION=$(nix eval --raw .#tailscale-userspace.imageTag)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Push tailscale-userspace image
+        run: |
+          DOCKER_REPOSITORY="docker://${{ env.REGISTRY }}/efficacy38/tailscale-userspace:${{ steps.version.outputs.version }}"
+          skopeo --insecure-policy copy --dest-creds="${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" "docker-archive:./result" "$DOCKER_REPOSITORY"
+
+      - name: Push latest tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          DOCKER_REPOSITORY="docker://${{ env.REGISTRY }}/efficacy38/tailscale-userspace:latest"
+          skopeo --insecure-policy copy --dest-creds="${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" "docker-archive:./result" "$DOCKER_REPOSITORY"
+
+  build-derp:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup nix env
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226
+
+      - name: Build tailscale-derp image
+        run: |
+          nix build .#tailscale-derp
+
+      - name: Get Tailscale version
+        id: version
+        run: |
+          VERSION=$(nix eval --raw .#tailscale-derp.imageTag)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Push tailscale-derp image
+        run: |
+          DOCKER_REPOSITORY="docker://${{ env.REGISTRY }}/efficacy38/tailscale-derp:${{ steps.version.outputs.version }}"
+          skopeo --insecure-policy copy --dest-creds="${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" "docker-archive:./result" "$DOCKER_REPOSITORY"
+
+      - name: Push latest tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          DOCKER_REPOSITORY="docker://${{ env.REGISTRY }}/efficacy38/tailscale-derp:latest"
+          skopeo --insecure-policy copy --dest-creds="${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" "docker-archive:./result" "$DOCKER_REPOSITORY"
