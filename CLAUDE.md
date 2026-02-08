@@ -40,11 +40,18 @@ Copy `env.sample` to `.env`. Key variables:
 |---|---|---|
 | `TAILSCALE_AUTH_KEY` | Both | Auth key for Tailscale network |
 | `TAILSCALE_HOSTNAME` | Both | Node hostname |
-| `TAILSCALE_OPT` | Both | Extra `tailscale up` flags (e.g., `--login-server`) |
-| `TAILSCALED_STATE_ARG` | userspace | `"mem:"` (ephemeral) or `"/app/states"` (persistent) |
-| `TAILSCALED_OPT` | userspace | Extra `tailscaled` flags (proxy listen addresses) |
+| `TAILSCALE_LOGIN_SERVER` | Both | Custom login server URL (e.g., Headscale) |
+| `TAILSCALE_ADVERTISE_EXIT_NODE` | Both | Advertise as exit node (`true`/`false`) |
+| `TAILSCALE_ADVERTISE_ROUTES` | Both | Subnet routes to advertise (comma-separated CIDRs) |
+| `TAILSCALE_ACCEPT_ROUTES` | Both | Accept routes from other nodes (`true`/`false`) |
+| `TAILSCALE_ACCEPT_DNS` | Both | Accept DNS from Tailscale (`true`/`false`) |
+| `TAILSCALE_EXTRA_ARGS` | Both | Extra `tailscale up` flags (escape hatch) |
+| `TAILSCALED_STATE_ARG` | Both | `"mem:"` (ephemeral) or `"/app/states"` (persistent) |
+| `TAILSCALED_SOCKS5_SERVER` | userspace | SOCKS5 proxy listen address (e.g., `0.0.0.0:1055`) |
+| `TAILSCALED_HTTP_PROXY` | userspace | HTTP proxy listen address (e.g., `0.0.0.0:1056`) |
+| `TAILSCALED_EXTRA_ARGS` | Both | Extra `tailscaled` flags (escape hatch) |
 | `DERP_DOMAIN` | derp | Domain name for DERP server |
-| `DERP_VERIFY_CLIENTS` | derp | Verify Tailscale clients (true/false) |
+| `DERP_VERIFY_CLIENTS` | derp | Verify Tailscale clients (`true`/`false`) |
 | `DERP_CERT_MODE` | derp | Certificate mode (default: letsencrypt) |
 | `DERP_CERT_DIR` | derp | Certificate directory (default: /app/certs) |
 

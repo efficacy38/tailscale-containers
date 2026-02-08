@@ -18,27 +18,32 @@ vim .env
 同時也可以宣告這個 service 是 subnet router 或是 exit node。
 
 ```shell
-# (Required, both of tailscale-derp and tailscale-userspace) tailscaled config
+# (Required) Tailscale auth
 TAILSCALE_AUTH_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TAILSCALE_HOSTNAME=derp
-TAILSCALE_OPT=--login-server https://xxxxxxxxx.net
 
-# (Optional) if you want's tailscale to be as userspace proxy
-## TAILSCALED_OPT can be `mem:` for ephemernal machine(it would auto delete it
-## 30 min to 48 hours), or use `/app/states` to store machine's auth key
+# (Optional) Custom login server (e.g. Headscale)
+TAILSCALE_LOGIN_SERVER=https://xxxxxxxxx.net
+
+# (Optional) State storage: "mem:" (ephemeral) or "/app/states" (persistent)
 TAILSCALED_STATE_ARG="mem:"
-TAILSCALED_OPT=--socks5-server=0.0.0.0:1055 --outbound-http-proxy-listen=0.0.0.0:1056
+
+# (Optional) SOCKS5 and HTTP proxy listen addresses
+TAILSCALED_SOCKS5_SERVER=0.0.0.0:1055
+TAILSCALED_HTTP_PROXY=0.0.0.0:1056
 ```
 
 ## tailscale-derp
 
 ```shell
-# (Required, both of tailscale-derp and tailscale-userspace) tailscaled config
+# (Required) Tailscale auth
 TAILSCALE_AUTH_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 TAILSCALE_HOSTNAME=derp
-TAILSCALE_OPT=--login-server https://xxxxxxxxx.net
 
-# (Required, tailscale-derp) derp configs
+# (Optional) Custom login server (e.g. Headscale)
+TAILSCALE_LOGIN_SERVER=https://xxxxxxxxx.net
+
+# (Required, tailscale-derp) DERP server config
 DERP_DOMAIN=xxxxxxxxx.net
 DERP_VERIFY_CLIENTS=true
 ```
