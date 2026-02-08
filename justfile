@@ -50,7 +50,7 @@ update:
 info:
     nix flake show
 
-# Show current versions of Tailscale binaries in nixpkgs
+# Show current versions of packages from nixpkgs
 versions:
-    @echo "Tailscale package version from nixpkgs:"
-    @echo "  tailscale/tailscaled/derper: $(nix eval --raw nixpkgs#tailscale.version)"
+    @echo "Package versions from nixpkgs:"
+    @echo "  tailscale: $(nix eval --raw nixpkgs#tailscale.version)"
